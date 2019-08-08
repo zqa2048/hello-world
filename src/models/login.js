@@ -1,5 +1,8 @@
 import { parse, stringify } from 'qs';
 import { routerRedux } from 'dva/router';
+import { setToken, setAuthority } from '../utils/authority';
+import { reloadAuthorized } from '../utils/Authorized';
+
 export function getPageQuery() {
   return parse(window.location.href.split('?')[1]);
 }
@@ -10,6 +13,10 @@ const Model = {
   },
   effects: {
     *logout(_, { put }) {
+      setToken('');
+      setAuthority('');
+      reloadAuthorized();
+
       const { redirect } = getPageQuery(); // redirect
 
       if (window.location.pathname !== '/user/login' && !redirect) {
@@ -25,9 +32,9 @@ const Model = {
     },
   },
   reducers: {
-    changeLoginStatus(state, { payload }) {
-      return { ...state, status: payload.status, type: payload.type };
-    },
+    // changeLoginStatus(state, { payload }) {
+    //   return { ...state, status: payload.status, type: payload.type };
+    // },
   },
 };
 export default Model;

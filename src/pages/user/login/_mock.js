@@ -1,4 +1,4 @@
-function getFakeCaptcha(req, res) {
+function getCaptcha(req, res) {
   return res.json('captcha-xxx');
 }
 
@@ -30,5 +30,5 @@ export default {
       currentAuthority: 'guest',
     });
   },
-  'GET  /api/login/captcha': getFakeCaptcha,
+  'GET  /api/login/captcha': getCaptcha,
 };

@@ -1,7 +1,7 @@
 import request from '@/utils/request';
 
-export async function fakeRegister(params) {
-  return request('/api/register', {
+export async function register(params) {
+  return request('/api/admin/registerAdmin', {
     method: 'POST',
     data: params,
   });

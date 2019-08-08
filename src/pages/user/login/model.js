@@ -1,6 +1,9 @@
+import { message } from 'antd';
 import { routerRedux } from 'dva/router';
-import { fakeAccountLogin, getFakeCaptcha } from './service';
+import { accountLogin, getCaptcha } from './service';
 import { getPageQuery, setAuthority } from './utils/utils';
+import { setToken } from '../../../utils/authority';
+import { reloadAuthorized } from '../../../utils/Authorized';
 
 const Model = {
   namespace: 'userLogin',
@@ -9,13 +12,17 @@ const Model = {
   },
   effects: {
     *login({ payload }, { call, put }) {
-      const response = yield call(fakeAccountLogin, payload);
-      yield put({
-        type: 'changeLoginStatus',
-        payload: response,
-      }); // Login successfully
+      const response = yield call(accountLogin, payload);
+      // yield put({
+      //   type: 'changeLoginStatus',
+      //   payload: response,
+      // }); // Login successfully
 
-      if (response.status === 'ok') {
+      if (response.code === 0) {
+        setToken(response.data.admin_token);
+        setAuthority('admin');
+        reloadAuthorized();
+
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
         let { redirect } = params;
@@ -36,11 +43,13 @@ const Model = {
         }
 
         yield put(routerRedux.replace(redirect || '/'));
+      } else {
+        message.error(response.message);
       }
     },
 
     *getCaptcha({ payload }, { call }) {
-      yield call(getFakeCaptcha, payload);
+      yield call(getCaptcha, payload);
     },
   },
   reducers: {

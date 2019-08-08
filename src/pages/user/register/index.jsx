@@ -67,20 +67,39 @@ class Register extends Component {
   }
 
   onGetCaptcha = () => {
-    let count = 59;
-    this.setState({
-      count,
-    });
-    this.interval = window.setInterval(() => {
-      count -= 1;
-      this.setState({
-        count,
-      });
+    const { dispatch, form } = this.props;
 
-      if (count === 0) {
-        clearInterval(this.interval);
-      }
-    }, 1000);
+    return new Promise((resolve, reject) => {
+      form.validateFields(['mobile'], {}, (err, values) => {
+        if (err) {
+          reject(err);
+        } else {
+          this.countDownCaptcha();
+
+          if (values.mobile) {
+            dispatch({
+              type: 'register/getCaptcha',
+              payload: {
+                mobile: values.mobile,
+              },
+            })
+              .then(status => {
+                if (status && status.code === 0) {
+                  this.setState({
+                    count: 0,
+                  });
+                } else {
+                  clearInterval(this.interval);
+                  this.setState({
+                    count: 0,
+                  });
+                }
+              })
+              .catch(reject);
+          }
+        }
+      });
+    });
   };
 
   getPasswordStatus = () => {
@@ -108,10 +127,24 @@ class Register extends Component {
       (err, values) => {
         if (!err) {
           const { prefix } = this.state;
+          const submitValues = {
+            email: values.email,
+            password: values.password,
+            repeatPassword: values.repeatPassword,
+            lang: 'zh-CN',
+            name: '',
+            mobile: values.mobile,
+            captcha: values.captcha,
+          };
+
           dispatch({
             type: 'userRegister/submit',
-            payload: { ...values, prefix },
-          });
+            payload: { ...submitValues, prefix },
+          })
+            .then(status => {
+              console.log(status);
+            })
+            .catch();
         }
       },
     );
@@ -175,6 +208,23 @@ class Register extends Component {
     });
   };
 
+  countDownCaptcha() {
+    let count = 59;
+    this.setState({
+      count,
+    });
+    this.interval = window.setInterval(() => {
+      count -= 1;
+      this.setState({
+        count,
+      });
+
+      if (count === 0) {
+        clearInterval(this.interval);
+      }
+    }, 1000);
+  }
+
   renderPasswordProgress = () => {
     const { form } = this.props;
     const value = form.getFieldValue('password');
@@ -203,7 +253,7 @@ class Register extends Component {
         </h3>
         <Form onSubmit={this.handleSubmit}>
           <FormItem>
-            {getFieldDecorator('mail', {
+            {getFieldDecorator('email', {
               rules: [
                 {
                   required: true,
@@ -277,7 +327,7 @@ class Register extends Component {
             </Popover>
           </FormItem>
           <FormItem>
-            {getFieldDecorator('confirm', {
+            {getFieldDecorator('repeatPassword', {
               rules: [
                 {
                   required: true,
