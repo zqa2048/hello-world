@@ -1,5 +1,4 @@
 export default [
-
   // user
   {
     path: '/user',
@@ -41,28 +40,41 @@ export default [
         Routes: ['src/pages/Authorized'],
         authority: ['admin', 'user'],
         routes: [
-          {
-            path: '/dashboard',
-            name: 'dashboard',
-            icon: 'dashboard',
-            routes: [
-              {
-                name: 'analysis',
-                path: '/dashboard/analysis',
-                component: './dashboard/analysis',
-              },
-              {
-                name: 'monitor',
-                path: '/dashboard/monitor',
-                component: './dashboard/monitor',
-              },
-              {
-                name: 'workplace',
-                path: '/dashboard/workplace',
-                component: './dashboard/workplace',
-              },
-            ],
-          },
+          // {
+          //   path: '/dashboard',
+          //   name: 'dashboard',
+          //   icon: 'dashboard',
+          //   routes: [
+          //     {
+          //       name: 'analysis',
+          //       path: '/dashboard/analysis',
+          //       component: './dashboard/analysis',
+          //     },
+          //   ],
+          // },
+          // {
+          //   name: 'exception',
+          //   icon: 'warning',
+          //   path: '/exception',
+          //   routes: [
+          //     // exception
+          //     {
+          //       path: '/exception/403',
+          //       name: 'not-permission',
+          //       component: './Exception/403',
+          //     },
+          //     {
+          //       path: '/exception/404',
+          //       name: 'not-find',
+          //       component: './Exception/404',
+          //     },
+          //     {
+          //       path: '/exception/500',
+          //       name: 'server-error',
+          //       component: './Exception/500',
+          //     },
+          //   ],
+          // },
           {
             component: '404',
           },
