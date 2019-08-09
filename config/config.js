@@ -134,10 +134,10 @@ export default {
     },
   },
   */
-  proxy: {
-    '/api/': {
-      target: 'http://nreal-api.v-dk.com',
-      changeOrigin: true,
-    },
-  },
+  // proxy: {
+  //   '/api/': {
+  //     target: 'http://nreal-api.v-dk.com',
+  //     changeOrigin: true,
+  //   },
+  // },
 };

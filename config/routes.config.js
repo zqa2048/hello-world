@@ -24,6 +24,11 @@ export default [
         component: './user/register',
       },
       {
+        name: 'findPwd',
+        path: '/user/findPwd',
+        component: './user/findPwd',
+      },
+      {
         component: '404',
       },
     ],
@@ -40,6 +45,12 @@ export default [
         Routes: ['src/pages/Authorized'],
         authority: ['admin', 'user'],
         routes: [
+          {
+            path: '/cdn',
+            name: 'cdn',
+            icon: 'dashboard',
+            component: './cdn/index',
+          },
           // {
           //   path: '/dashboard',
           //   name: 'dashboard',
