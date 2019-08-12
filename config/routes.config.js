@@ -54,7 +54,7 @@ export default [
             path: '/cdn',
             name: 'cdn',
             icon: 'dashboard',
-            component: './cdn/index',
+            component: './cdn',
           },
           {
             name: 'account',
