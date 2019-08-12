@@ -1,4 +1,4 @@
-import { DefaultFooter, getMenuData, getPageTitle } from '@ant-design/pro-layout';
+import { getMenuData, getPageTitle } from '@ant-design/pro-layout';
 import DocumentTitle from 'react-document-title';
 import Link from 'umi/link';
 import React from 'react';
@@ -7,6 +7,7 @@ import { formatMessage } from 'umi-plugin-react/locale';
 import SelectLang from '@/components/SelectLang';
 import logo from '../assets/logo-black.png';
 import styles from './UserLayout.less';
+import FooterRender from '../components/FooterRender';
 
 const UserLayout = props => {
   const {
@@ -44,7 +45,7 @@ const UserLayout = props => {
           </div>
           {children}
         </div>
-        <DefaultFooter />
+        <FooterRender />
       </div>
     </DocumentTitle>
   );

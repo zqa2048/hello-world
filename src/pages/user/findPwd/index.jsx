@@ -250,54 +250,96 @@ class FindPwd extends Component {
     const { getFieldDecorator } = form;
     const { count, prefix, help, visible } = this.state;
     return (
-      <Modal
-        title={formatMessage({ id: 'app.login.forgot-password' })}
-        visible={visible}
-        onOk={this.handleOk}
-        confirmLoading={confirmLoading}
-        onCancel={this.handleCancel}
-      >
-        <Form>
-          {success &&
-            this.renderMessage(
-              formatMessage({ id: 'app.security-view.modify-success' }),
-              'success'
-            )}
-          {!success &&
-            error &&
-            errorTip &&
-            this.renderMessage(errorTip, 'error')}
+      <div className={styles.main}>
+        <h3>
+          <FormattedMessage id="user-register.register.register" />
+        </h3>
+        <Form onSubmit={this.handleSubmit}>
           <FormItem>
-            {getFieldDecorator('PhoneOrEmail', {
+            {getFieldDecorator('email', {
               rules: [
                 {
-                  validator: phoneAndEmailVerify,
+                  required: true,
+                  message: formatMessage({
+                    id: 'user-register.email.required',
+                  }),
+                },
+                {
+                  type: 'email',
+                  message: formatMessage({
+                    id: 'user-register.email.wrong-format',
+                  }),
                 },
               ],
             })(
               <Input
                 size="large"
                 placeholder={formatMessage({
-                  id: 'validation.phone-email.required',
+                  id: 'user-register.email.placeholder',
                 })}
-              />
+              />,
             )}
           </FormItem>
+          <FormItem help={help}>
+            <Popover
+              getPopupContainer={node => {
+                if (node && node.parentNode) {
+                  return node.parentNode;
+                }
+
+                return node;
+              }}
+              content={
+                <div
+                  style={{
+                    padding: '4px 0',
+                  }}
+                >
+                  {passwordStatusMap[this.getPasswordStatus()]}
+                  {this.renderPasswordProgress()}
+                  <div
+                    style={{
+                      marginTop: 10,
+                    }}
+                  >
+                    <FormattedMessage id="user-register.strength.msg" />
+                  </div>
+                </div>
+              }
+              overlayStyle={{
+                width: 240,
+              }}
+              placement="right"
+              visible={visible}
+            >
+              {getFieldDecorator('password', {
+                rules: [
+                  {
+                    validator: this.checkPassword,
+                  },
+                ],
+              })(
+                <Input
+                  size="large"
+                  type="password"
+                  placeholder={formatMessage({
+                    id: 'user-register.password.placeholder',
+                  })}
+                />,
+              )}
+            </Popover>
+          </FormItem>
           <FormItem>
-            {getFieldDecorator('Password', {
+            {getFieldDecorator('repeatPassword', {
               rules: [
                 {
                   required: true,
                   message: formatMessage({
-                    id: 'validation.password.required',
+                    id: 'user-register.confirm-password.required',
                   }),
                 },
                 {
-                  min: 6,
-                  max: 16,
-                  message: formatMessage({
-                    id: 'validation.password.strength.msg',
-                  }),
+                  validator: this.checkConfirm,
                 },
               ],
             })(
@@ -305,74 +347,105 @@ class FindPwd extends Component {
                 size="large"
                 type="password"
                 placeholder={formatMessage({
-                  id: 'validation.new-password.required',
+                  id: 'user-register.confirm-password.placeholder',
                 })}
-              />
+              />,
             )}
-            <FormItem />
-            <FormItem>
-              {getFieldDecorator('PasswordAgain', {
+          </FormItem>
+          <FormItem>
+            <InputGroup compact>
+              <Select
+                size="large"
+                value={prefix}
+                onChange={this.changePrefix}
+                style={{
+                  width: '20%',
+                }}
+              >
+                <Option value="86">+86</Option>
+                <Option value="87">+87</Option>
+              </Select>
+              {getFieldDecorator('mobile', {
                 rules: [
                   {
                     required: true,
                     message: formatMessage({
-                      id: 'validation.confirm-password.required',
+                      id: 'user-register.phone-number.required',
                     }),
                   },
                   {
-                    validator: this.dbleCheckPassword,
+                    pattern: /^\d{11}$/,
+                    message: formatMessage({
+                      id: 'user-register.phone-number.wrong-format',
+                    }),
                   },
                 ],
-                validateTrigger: 'onBlur',
               })(
                 <Input
                   size="large"
-                  type="password"
+                  style={{
+                    width: '80%',
+                  }}
                   placeholder={formatMessage({
-                    id: 'validation.confirm-new-password.required',
+                    id: 'user-register.phone-number.placeholder',
                   })}
-                />
+                />,
               )}
-            </FormItem>
-            <FormItem>
-              <Row gutter={8}>
-                <Col span={16}>
-                  {getFieldDecorator('Code', {
-                    rules: [
-                      {
-                        required: true,
-                        message: formatMessage({
-                          id: 'validation.verification-code.required',
-                        }),
-                      },
-                    ],
-                  })(
-                    <Input
-                      size="large"
-                      placeholder={formatMessage({
-                        id: 'validation.verification-code.required',
-                      })}
-                    />
-                  )}
-                </Col>
-                <Col span={8}>
-                  <Button
+            </InputGroup>
+          </FormItem>
+          <FormItem>
+            <Row gutter={8}>
+              <Col span={16}>
+                {getFieldDecorator('captcha', {
+                  rules: [
+                    {
+                      required: true,
+                      message: formatMessage({
+                        id: 'user-register.verification-code.required',
+                      }),
+                    },
+                  ],
+                })(
+                  <Input
                     size="large"
-                    disabled={count}
-                    onClick={() => this.onGetCaptcha()}
-                  >
-                    {count
-                      ? `${count} s`
-                      : formatMessage({
-                          id: 'app.common.get-verification-code',
-                        })}
-                  </Button>
-                </Col>
-              </Row>
-            </FormItem>
+                    placeholder={formatMessage({
+                      id: 'user-register.verification-code.placeholder',
+                    })}
+                  />,
+                )}
+              </Col>
+              <Col span={8}>
+                <Button
+                  size="large"
+                  disabled={!!count}
+                  className={styles.getCaptcha}
+                  onClick={this.onGetCaptcha}
+                >
+                  {count
+                    ? `${count} s`
+                    : formatMessage({
+                        id: 'user-register.register.get-verification-code',
+                      })}
+                </Button>
+              </Col>
+            </Row>
+          </FormItem>
+          <FormItem>
+            <Button
+              size="large"
+              loading={submitting}
+              className={styles.submit}
+              type="primary"
+              htmlType="submit"
+            >
+              <FormattedMessage id="user-register.register.register" />
+            </Button>
+            <Link className={styles.login} to="/user/login">
+              <FormattedMessage id="user-register.register.sign-in" />
+            </Link>
           </FormItem>
         </Form>
-      </Modal>
+      </div>
     );
   }
 }

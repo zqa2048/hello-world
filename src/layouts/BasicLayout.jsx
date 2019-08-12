@@ -10,8 +10,9 @@ import { connect } from 'dva';
 import { formatMessage } from 'umi-plugin-react/locale';
 import Authorized from '@/utils/Authorized';
 import RightContent from '@/components/GlobalHeader/RightContent';
-import { isAntDesignPro } from '@/utils/utils';
+// import { isAntDesignPro } from '@/utils/utils';
 import logo from '../assets/logo-white.png';
+import FooterRender from '../components/FooterRender';
 /**
  * use Authorized check all menu item
  */
@@ -21,32 +22,6 @@ const menuDataRender = menuList =>
     const localItem = { ...item, children: item.children ? menuDataRender(item.children) : [] };
     return Authorized.check(item.authority, localItem, null);
   });
-
-const footerRender = (_, defaultDom) => {
-  if (!isAntDesignPro()) {
-    return defaultDom;
-  }
-
-  return (
-    <>
-      {defaultDom}
-      <div
-        style={{
-          padding: '0px 24px 24px',
-          textAlign: 'center',
-        }}
-      >
-        <a href="https://www.netlify.com" target="_blank" rel="noopener noreferrer">
-          <img
-            src="https://www.netlify.com/img/global/badges/netlify-color-bg.svg"
-            width="82px"
-            alt="netlify logo"
-          />
-        </a>
-      </div>
-    </>
-  );
-};
 
 const BasicLayout = props => {
   const { dispatch, children, settings } = props;
@@ -105,7 +80,7 @@ const BasicLayout = props => {
             <span>{route.breadcrumbName}</span>
           );
         }}
-        footerRender={footerRender}
+        footerRender={FooterRender}
         menuDataRender={menuDataRender}
         formatMessage={formatMessage}
         rightContentRender={rightProps => <RightContent {...rightProps} />}
@@ -114,15 +89,6 @@ const BasicLayout = props => {
       >
         {children}
       </ProLayout>
-      <SettingDrawer
-        settings={settings}
-        onSettingChange={config =>
-          dispatch({
-            type: 'settings/changeSetting',
-            payload: config,
-          })
-        }
-      />
     </>
   );
 };
