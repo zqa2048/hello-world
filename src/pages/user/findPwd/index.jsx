@@ -6,23 +6,25 @@ import { connect } from 'dva';
 import router from 'umi/router';
 import styles from './style.less';
 
+import { phoneAndEmailVerify } from '../../../utils/validators';
+
 const FormItem = Form.Item;
 const { Option } = Select;
 const InputGroup = Input.Group;
 const passwordStatusMap = {
   ok: (
     <div className={styles.success}>
-      <FormattedMessage id="user-register.strength.strong" />
+      <FormattedMessage id="find-password.strength.strong" />
     </div>
   ),
   pass: (
     <div className={styles.warning}>
-      <FormattedMessage id="user-register.strength.medium" />
+      <FormattedMessage id="find-password.strength.medium" />
     </div>
   ),
   poor: (
     <div className={styles.error}>
-      <FormattedMessage id="user-register.strength.short" />
+      <FormattedMessage id="find-password.strength.short" />
     </div>
   ),
 };
@@ -32,9 +34,9 @@ const passwordProgressMap = {
   poor: 'exception',
 };
 
-@connect(({ userRegister, loading }) => ({
-  userRegister,
-  submitting: loading.effects['userRegister/submit'],
+@connect(({ forgetPassword, loading }) => ({
+  forgetPassword,
+  submitting: loading.effects['forgetPassword/submit'],
 }))
 class FindPwd extends Component {
   state = {
@@ -50,10 +52,10 @@ class FindPwd extends Component {
   interval = undefined;
 
   componentDidUpdate() {
-    const { userRegister, form } = this.props;
+    const { forgetPassword, form } = this.props;
     const account = form.getFieldValue('email');
 
-    if (userRegister.status === 'ok') {
+    if (forgetPassword.status === 'ok') {
       message.success('注册成功！');
       router.push({
         pathname: '/user/register-result',
@@ -72,16 +74,16 @@ class FindPwd extends Component {
     const { dispatch, form } = this.props;
 
     return new Promise((resolve, reject) => {
-      form.validateFields(['mobile'], {}, (err, values) => {
+      form.validateFields(['emailOrPhone'], {}, (err, values) => {
         if (err) {
           reject(err);
         } else {
           this.countDownCaptcha();
 
-          if (values.mobile) {
+          if (values.emailOrPhone) {
             dispatch({
               type: 'userLogin/getCaptcha',
-              payload: values.mobile,
+              payload: values.emailOrPhone,
             })
               .then(status => {
                 if (status && status.code === 0) {
@@ -131,16 +133,15 @@ class FindPwd extends Component {
         if (!err) {
           const { prefix } = this.state;
           const submitValues = {
-            email: values.email,
+            emailOrPhone: values.emailOrPhone,
             password: values.password,
             repeatPassword: values.repeatPassword,
             lang: 'zh-CN',
-            mobile: values.mobile,
             captcha: values.captcha,
           };
 
           dispatch({
-            type: 'userRegister/submit',
+            type: 'forgetPassword/submit',
             payload: { ...submitValues, prefix },
           })
             .then(status => {
@@ -159,7 +160,7 @@ class FindPwd extends Component {
     if (value && value !== form.getFieldValue('password')) {
       callback(
         formatMessage({
-          id: 'user-register.password.twice',
+          id: 'find-password.password.twice',
         }),
       );
     } else {
@@ -173,7 +174,7 @@ class FindPwd extends Component {
     if (!value) {
       this.setState({
         help: formatMessage({
-          id: 'user-register.password.required',
+          id: 'find-password.password.required',
         }),
         visible: !!value,
       });
@@ -248,34 +249,26 @@ class FindPwd extends Component {
   render() {
     const { form, submitting } = this.props;
     const { getFieldDecorator } = form;
-    const { count, prefix, help, visible } = this.state;
+    const { count, help, visible } = this.state;
     return (
       <div className={styles.main}>
         <h3>
-          <FormattedMessage id="user-register.register.register" />
+          <FormattedMessage id="find-password.login.forgot-password" />
         </h3>
         <Form onSubmit={this.handleSubmit}>
           <FormItem>
-            {getFieldDecorator('email', {
+            {getFieldDecorator('emailOrPhone', {
+              validateTrigger: ['onChange', 'onBlur'],
               rules: [
                 {
-                  required: true,
-                  message: formatMessage({
-                    id: 'user-register.email.required',
-                  }),
-                },
-                {
-                  type: 'email',
-                  message: formatMessage({
-                    id: 'user-register.email.wrong-format',
-                  }),
+                  validator: phoneAndEmailVerify,
                 },
               ],
             })(
               <Input
                 size="large"
                 placeholder={formatMessage({
-                  id: 'user-register.email.placeholder',
+                  id: 'find-password.emailOrPhone.placeholder',
                 })}
               />,
             )}
@@ -302,7 +295,7 @@ class FindPwd extends Component {
                       marginTop: 10,
                     }}
                   >
-                    <FormattedMessage id="user-register.strength.msg" />
+                    <FormattedMessage id="find-password.strength.msg" />
                   </div>
                 </div>
               }
@@ -323,7 +316,7 @@ class FindPwd extends Component {
                   size="large"
                   type="password"
                   placeholder={formatMessage({
-                    id: 'user-register.password.placeholder',
+                    id: 'find-password.password.placeholder',
                   })}
                 />,
               )}
@@ -335,7 +328,7 @@ class FindPwd extends Component {
                 {
                   required: true,
                   message: formatMessage({
-                    id: 'user-register.confirm-password.required',
+                    id: 'find-password.confirm-password.required',
                   }),
                 },
                 {
@@ -347,51 +340,10 @@ class FindPwd extends Component {
                 size="large"
                 type="password"
                 placeholder={formatMessage({
-                  id: 'user-register.confirm-password.placeholder',
+                  id: 'find-password.confirm-password.placeholder',
                 })}
               />,
             )}
-          </FormItem>
-          <FormItem>
-            <InputGroup compact>
-              <Select
-                size="large"
-                value={prefix}
-                onChange={this.changePrefix}
-                style={{
-                  width: '20%',
-                }}
-              >
-                <Option value="86">+86</Option>
-                <Option value="87">+87</Option>
-              </Select>
-              {getFieldDecorator('mobile', {
-                rules: [
-                  {
-                    required: true,
-                    message: formatMessage({
-                      id: 'user-register.phone-number.required',
-                    }),
-                  },
-                  {
-                    pattern: /^\d{11}$/,
-                    message: formatMessage({
-                      id: 'user-register.phone-number.wrong-format',
-                    }),
-                  },
-                ],
-              })(
-                <Input
-                  size="large"
-                  style={{
-                    width: '80%',
-                  }}
-                  placeholder={formatMessage({
-                    id: 'user-register.phone-number.placeholder',
-                  })}
-                />,
-              )}
-            </InputGroup>
           </FormItem>
           <FormItem>
             <Row gutter={8}>
@@ -401,7 +353,7 @@ class FindPwd extends Component {
                     {
                       required: true,
                       message: formatMessage({
-                        id: 'user-register.verification-code.required',
+                        id: 'find-password.verification-code.required',
                       }),
                     },
                   ],
@@ -409,7 +361,7 @@ class FindPwd extends Component {
                   <Input
                     size="large"
                     placeholder={formatMessage({
-                      id: 'user-register.verification-code.placeholder',
+                      id: 'find-password.verification-code.placeholder',
                     })}
                   />,
                 )}
@@ -424,7 +376,7 @@ class FindPwd extends Component {
                   {count
                     ? `${count} s`
                     : formatMessage({
-                        id: 'user-register.register.get-verification-code',
+                        id: 'find-password.register.get-verification-code',
                       })}
                 </Button>
               </Col>
@@ -438,10 +390,10 @@ class FindPwd extends Component {
               type="primary"
               htmlType="submit"
             >
-              <FormattedMessage id="user-register.register.register" />
+              <FormattedMessage id="find-password.find.comfirm" />
             </Button>
             <Link className={styles.login} to="/user/login">
-              <FormattedMessage id="user-register.register.sign-in" />
+              <FormattedMessage id="find-password.register.sign-in" />
             </Link>
           </FormItem>
         </Form>

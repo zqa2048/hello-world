@@ -252,7 +252,7 @@ class Register extends Component {
     return (
       <div className={styles.main}>
         <h3>
-          <FormattedMessage id="user-register.register.register" />
+          <FormattedMessage id="user-register.register.registerTitle" />
         </h3>
         <Form onSubmit={this.handleSubmit}>
           <FormItem>

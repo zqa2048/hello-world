@@ -1,7 +1,7 @@
 import { register } from './service';
 
 const Model = {
-  namespace: 'userRegister',
+  namespace: 'forgetPassword',
   state: {
     status: undefined,
   },
@@ -9,13 +9,13 @@ const Model = {
     *submit({ payload }, { call, put }) {
       const response = yield call(register, payload);
       yield put({
-        type: 'registerHandle',
+        type: 'forgetPasswordHandle',
         payload: response,
       });
     },
   },
   reducers: {
-    registerHandle(state, { payload }) {
+    forgetPasswordHandle(state, { payload }) {
       return { ...state, status: payload.status };
     },
   },
