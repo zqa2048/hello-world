@@ -54,7 +54,7 @@ export default [
             path: '/cdn',
             name: 'CDN加速',
             icon: 'dashboard',
-            component: './cdn/index',
+            component: './cdn',
           },
           // {
           //   path: '/dashboard',
