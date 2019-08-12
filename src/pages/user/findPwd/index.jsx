@@ -198,28 +198,28 @@ class FindPwd extends Component {
     }
   };
 
-  changePrefix = value => {
-    this.setState({
-      prefix: value,
-    });
-  };
+  // changePrefix = value => {
+  //   this.setState({
+  //     prefix: value,
+  //   });
+  // };
 
-  countDownCaptcha() {
-    let count = 59;
-    this.setState({
-      count,
-    });
-    this.interval = window.setInterval(() => {
-      count -= 1;
-      this.setState({
-        count,
-      });
+  // countDownCaptcha() {
+  //   let count = 59;
+  //   this.setState({
+  //     count,
+  //   });
+  //   this.interval = window.setInterval(() => {
+  //     count -= 1;
+  //     this.setState({
+  //       count,
+  //     });
 
-      if (count === 0) {
-        clearInterval(this.interval);
-      }
-    }, 1000);
-  }
+  //     if (count === 0) {
+  //       clearInterval(this.interval);
+  //     }
+  //   }, 1000);
+  // }
 
   renderPasswordProgress = () => {
     const { form } = this.props;
