@@ -13,6 +13,7 @@ export default {
   'app.preview.down.block': '下载此页面到本地项目',
   'validation.phone-number.wrong-format': '手机号格式错误',
   'validation.phone-number.required': '请输入手机号',
+  'validation.email-number.wrong-format': '邮箱格式有误',
   'validation.phone-email.wrong-format': '手机号或邮箱格式有误',
   'validation.phone-email.required': '请输入您的邮箱或者手机号',
   ...globalHeader,

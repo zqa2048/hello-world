@@ -47,10 +47,6 @@ const Model = {
         message.error(response.message);
       }
     },
-
-    *getCaptcha({ payload }, { call }) {
-      yield call(getCaptcha, payload);
-    },
   },
   reducers: {
     changeLoginStatus(state, { payload }) {

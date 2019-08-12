@@ -18,12 +18,10 @@ export function phoneAndEmailVerify(rule, value, callback) {
   const phoneReg = PHONE_REGEX;
   const emailReg = EMAIL_REGEX;
   if (value) {
-    if (phoneReg.test(value) && !emailReg.test(value)) {
-      callback(formatMessage({ id: 'validation.phone-email.wrong-format' }));
-    } else {
+    if (phoneReg.test(value) || emailReg.test(value)) {
       callback();
+    } else {
+      callback(formatMessage({ id: 'validation.phone-email.wrong-format' }));
     }
-  } else {
-    callback(formatMessage({ id: 'validation.phone-email.required' }));
   }
 }

@@ -1,16 +1,15 @@
-import { Button, Col, Form, Input, Popover, Progress, Row, Select, message } from 'antd';
+import { Button, Col, Form, Input, Popover, Progress, Row, message } from 'antd';
 import { FormattedMessage, formatMessage } from 'umi-plugin-react/locale';
 import React, { Component } from 'react';
 import Link from 'umi/link';
 import { connect } from 'dva';
 import router from 'umi/router';
 import styles from './style.less';
+// import { sleep } from '../../../utils/utils';
 
 import { phoneAndEmailVerify } from '../../../utils/validators';
 
 const FormItem = Form.Item;
-const { Option } = Select;
-const InputGroup = Input.Group;
 const passwordStatusMap = {
   ok: (
     <div className={styles.success}>
@@ -34,8 +33,7 @@ const passwordProgressMap = {
   poor: 'exception',
 };
 
-@connect(({ forgetPassword, loading }) => ({
-  forgetPassword,
+@connect(({ loading }) => ({
   submitting: loading.effects['forgetPassword/submit'],
 }))
 class FindPwd extends Component {
@@ -44,27 +42,11 @@ class FindPwd extends Component {
     confirmDirty: false,
     visible: false,
     help: '',
-    prefix: '86',
     // eslint-disable-next-line react/no-unused-state
     error: false,
   };
 
   interval = undefined;
-
-  componentDidUpdate() {
-    const { forgetPassword, form } = this.props;
-    const account = form.getFieldValue('email');
-
-    if (forgetPassword.status === 'ok') {
-      message.success('注册成功！');
-      router.push({
-        pathname: '/user/register-result',
-        state: {
-          account,
-        },
-      });
-    }
-  }
 
   componentWillUnmount() {
     clearInterval(this.interval);
@@ -78,29 +60,35 @@ class FindPwd extends Component {
         if (err) {
           reject(err);
         } else {
+          const phoneReg = /^1[0-9]{10}$/;
+          const emailReg = /^[.a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+          const val = values.emailOrPhone;
+          const isPhone = phoneReg.test(val);
+          const isEmail = emailReg.test(val);
           this.countDownCaptcha();
 
-          if (values.emailOrPhone) {
+          if (isPhone) {
             dispatch({
-              type: 'userLogin/getCaptcha',
-              payload: values.emailOrPhone,
+              type: 'login/getCaptcha',
+              payload: {
+                type: 1,
+                value: val,
+              },
             })
-              .then(status => {
-                if (status && status.code === 0) {
-                  this.setState({
-                    // eslint-disable-next-line react/no-unused-state
-                    error: false,
-                  });
-                } else {
-                  clearInterval(this.interval);
-                  this.setState({
-                    count: 0,
-                    // eslint-disable-next-line react/no-unused-state
-                    error: true,
-                  });
-                }
-              })
+              .then(resolve)
               .catch(reject);
+          } else if (isEmail) {
+            dispatch({
+              type: 'login/getCaptcha',
+              payload: {
+                type: 2,
+                value: val,
+              },
+            })
+              .then(resolve)
+              .catch(reject);
+          } else {
+            reject();
           }
         }
       });
@@ -131,22 +119,26 @@ class FindPwd extends Component {
       },
       (err, values) => {
         if (!err) {
-          const { prefix } = this.state;
           const submitValues = {
             emailOrPhone: values.emailOrPhone,
             password: values.password,
             repeatPassword: values.repeatPassword,
-            lang: 'zh-CN',
             captcha: values.captcha,
           };
 
           dispatch({
             type: 'forgetPassword/submit',
-            payload: { ...submitValues, prefix },
+            payload: { ...submitValues },
           })
-            .then(status => {
-              // eslint-disable-next-line no-console
-              console.log(status);
+            .then(() => {
+              const account = form.getFieldValue('emailOrPhone');
+              message.success('密码修改成功！');
+              router.push({
+                pathname: '/user/findPwd-result',
+                state: {
+                  account,
+                },
+              });
             })
             .catch();
         }

@@ -56,8 +56,11 @@ class Login extends Component {
         } else {
           const { dispatch } = this.props;
           dispatch({
-            type: 'userLogin/getCaptcha',
-            payload: values.mobile,
+            type: 'login/getCaptcha',
+            payload: {
+              type: 1,
+              value: values.mobile,
+            },
           })
             .then(resolve)
             .catch(reject);

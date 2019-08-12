@@ -6,6 +6,3 @@ export async function accountLogin(params) {
     data: params,
   });
 }
-export async function getCaptcha(mobile) {
-  return request(`/api/admin/captcha?mobile=${mobile}`);
-}

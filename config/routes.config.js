@@ -29,6 +29,11 @@ export default [
         component: './user/findPwd',
       },
       {
+        name: 'findPwd-result',
+        path: '/user/findPwd-result',
+        component: './user/findPwd-result',
+      },
+      {
         component: '404',
       },
     ],

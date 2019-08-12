@@ -2,6 +2,7 @@ import { parse, stringify } from 'qs';
 import { routerRedux } from 'dva/router';
 import { setToken, setAuthority } from '../utils/authority';
 import { reloadAuthorized } from '../utils/Authorized';
+import { getCaptcha } from '../services/user';
 
 export function getPageQuery() {
   return parse(window.location.href.split('?')[1]);
@@ -30,11 +31,15 @@ const Model = {
         );
       }
     },
+
+    *getCaptcha({ payload }, { call }) {
+      yield call(getCaptcha, payload);
+    },
   },
   reducers: {
-    // changeLoginStatus(state, { payload }) {
-    //   return { ...state, status: payload.status, type: payload.type };
-    // },
+    changeLoginStatus(state, { payload }) {
+      return { ...state, status: payload.status, type: payload.type };
+    },
   },
 };
 export default Model;

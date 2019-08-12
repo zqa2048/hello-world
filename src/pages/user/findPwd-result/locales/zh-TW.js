@@ -1,0 +1,22 @@
+export default {
+  'user-findPwd-result.login.userName': '賬戶',
+  'user-findPwd-result.login.password': '密碼',
+  'user-findPwd-result.login.message-invalid-credentials': '賬戶或密碼錯誤（admin/ant.design）',
+  'user-findPwd-result.login.message-invalid-verification-code': '驗證碼錯誤',
+  'user-findPwd-result.login.tab-login-credentials': '賬戶密碼登錄',
+  'user-findPwd-result.login.tab-login-mobile': '手機號登錄',
+  'user-findPwd-result.login.remember-me': '自動登錄',
+  'user-findPwd-result.login.forgot-password': '忘記密碼',
+  'user-findPwd-result.login.sign-in-with': '其他登錄方式',
+  'user-findPwd-result.login.signup': '註冊賬戶',
+  'user-findPwd-result.login.login': '登錄',
+  'user-findPwd-result.register.register': '註冊',
+  'user-findPwd-result.register.get-verification-code': '獲取驗證碼',
+  'user-findPwd-result.register.sign-in': '使用已有賬戶登錄',
+  'user-findPwd-result.findPwd-result.msg': '妳的賬戶：{email} 註冊成功',
+  'user-findPwd-result.findPwd-result.activation-email':
+    '激活郵件已發送到妳的郵箱中，郵件有效期為24小時。請及時登錄郵箱，點擊郵件中的鏈接激活帳戶。',
+  'user-findPwd-result.findPwd-result.back-home': '返回首頁',
+  'user-findPwd-result.findPwd-result.view-mailbox': '查看郵箱',
+  'user-findPwd-result.navBar.lang': '語言',
+};

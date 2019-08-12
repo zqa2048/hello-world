@@ -1,10 +1,3 @@
-function getCaptcha(req, res) {
-  return res.send({
-    code: 0,
-    captcha: 1234,
-  });
-}
-
 function makeString(length) {
   let result = '';
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -17,8 +10,6 @@ function makeString(length) {
 }
 
 export default {
-  'GET  /api/admin/captcha': getCaptcha,
-
   'POST  /api/admin/adminlogin': (req, res) => {
     const { type } = req.body;
 

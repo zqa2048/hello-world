@@ -1,23 +1,15 @@
-import { register } from './service';
+import { forgetPassword } from './service';
 
 const Model = {
   namespace: 'forgetPassword',
   state: {
-    status: undefined,
   },
   effects: {
-    *submit({ payload }, { call, put }) {
-      const response = yield call(register, payload);
-      yield put({
-        type: 'forgetPasswordHandle',
-        payload: response,
-      });
+    *submit({ payload }, { call }) {
+      yield call(forgetPassword, payload);
     },
   },
   reducers: {
-    forgetPasswordHandle(state, { payload }) {
-      return { ...state, status: payload.status };
-    },
   },
 };
 export default Model;
