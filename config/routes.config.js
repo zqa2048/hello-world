@@ -52,7 +52,7 @@ export default [
         routes: [
           {
             path: '/cdn',
-            name: 'CDN加速',
+            name: 'cdn',
             icon: 'dashboard',
             component: './cdn/index',
           },
