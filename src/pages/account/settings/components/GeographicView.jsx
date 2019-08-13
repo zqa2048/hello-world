@@ -9,12 +9,12 @@ const nullSelectItem = {
   key: '',
 };
 
-@connect(({ accountSettings, loading }) => {
-  const { province, city } = accountSettings;
+@connect(({ user, loading }) => {
+  const { province, city } = user;
   return {
     province,
     city,
-    loading: loading.models.accountSettings,
+    loading: loading.models.user,
   };
 })
 class GeographicView extends Component {
@@ -23,7 +23,7 @@ class GeographicView extends Component {
 
     if (dispatch) {
       dispatch({
-        type: 'accountSettings/fetchProvince',
+        type: 'user/fetchProvince',
       });
     }
   };
@@ -34,7 +34,7 @@ class GeographicView extends Component {
     if (!props.value && !!value && !!value.province) {
       if (dispatch) {
         dispatch({
-          type: 'accountSettings/fetchCity',
+          type: 'user/fetchCity',
           payload: value.province.key,
         });
       }
@@ -82,7 +82,7 @@ class GeographicView extends Component {
 
     if (dispatch) {
       dispatch({
-        type: 'accountSettings/fetchCity',
+        type: 'user/fetchCity',
         payload: item.key,
       });
     }

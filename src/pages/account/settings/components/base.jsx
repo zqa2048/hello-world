@@ -64,6 +64,12 @@ class BaseView extends Component {
     this.setBaseInfo();
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.currentUser !== this.props.currentUser) {
+      this.setBaseInfo();
+    }
+  }
+
   setBaseInfo = () => {
     const { currentUser, form } = this.props;
 
@@ -122,7 +128,6 @@ class BaseView extends Component {
             type: 'user/updateUserInfo',
             payload: { ...submitValues },
           });
-          this.setBaseInfo();
         }
       },
     );

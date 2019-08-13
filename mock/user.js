@@ -1,3 +1,14 @@
+import city from './city.json';
+import province from './province.json';
+
+function getProvince(_, res) {
+  return res.json(province);
+}
+
+function getCity(req, res) {
+  return res.json(city[req.params.province]);
+} // 代码中会兼容本地 service mock 以及部署站点的静态数据
+
 function getCaptcha(req, res) {
   return res.send({
     code: 0,
@@ -199,4 +210,6 @@ export default {
     });
   },
   'POST  /api/login/captcha': getCaptcha,
+  'GET  /api/geographic/province': getProvince,
+  'GET  /api/geographic/city/:province': getCity,
 };
