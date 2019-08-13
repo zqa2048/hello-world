@@ -1,8 +1,11 @@
-# 请参考 https://help.aliyun.com/document_detail/59293.html 了解更多关于release文件的编写方式
+# 语言类型，需要修改，否则无法调用对应的构建环境
+code.language=node8.x
 
-# 构建源码语言类型
-code.language=scripts
-
-# Docker镜像构建之后push的仓库地址
+#构建命令
+build.command=sh build.${ENV_PROFILE}.sh
+#减少打包时间
+build.output=./dist
+#build.output.nottgz=True
+build.tools.docker.args=--build-arg APP_NAME=${APP_NAME} --build-arg ENV_DIST=${ENV_DIST} --build-arg ENV_CONF=${ENV_CONF}
 docker.repo=registry.cn-beijing.aliyuncs.com/fev/fim-cloud-web
 docker.tag=${PACKAGE_LABEL}_${TIMESTAMP}
