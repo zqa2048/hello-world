@@ -45,21 +45,17 @@ const validatorGeographic = (_, value, callback) => {
 };
 
 const validatorPhone = (rule, value, callback) => {
-  const values = value.split('-');
+  const values = value;
 
-  if (!values[0]) {
+  if (!values) {
     callback('Please input your area code!');
-  }
-
-  if (!values[1]) {
-    callback('Please input your phone number!');
   }
 
   callback();
 };
 
-@connect(({ accountSettings }) => ({
-  currentUser: accountSettings.currentUser,
+@connect(({ user }) => ({
+  currentUser: user.currentUser,
 }))
 class BaseView extends Component {
   view = undefined;
@@ -101,16 +97,35 @@ class BaseView extends Component {
 
   handlerSubmit = event => {
     event.preventDefault();
-    const { form } = this.props;
-    form.validateFields(err => {
-      if (!err) {
-        message.success(
-          formatMessage({
-            id: 'account-settings.basic.update.success',
-          }),
-        );
-      }
-    });
+    const { form, dispatch } = this.props;
+    form.validateFields(
+      {
+        force: true,
+      },
+      (err, values) => {
+        if (!err) {
+          // message.success(
+          //   formatMessage({
+          //     id: 'account-settings.basic.update.success',
+          //   }),
+          // );
+          const submitValues = {
+            email: values.email,
+            name: values.name,
+            profile: values.profile,
+            country: values.country,
+            geographic: values.geographic,
+            address: values.address,
+            phone: values.phone,
+          };
+          dispatch({
+            type: 'user/updateUserInfo',
+            payload: { ...submitValues },
+          });
+          this.setBaseInfo();
+        }
+      },
+    );
   };
 
   render() {

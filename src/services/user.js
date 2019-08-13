@@ -16,3 +16,9 @@ export async function getCaptcha(params) {
     data: params,
   });
 }
+export async function updateUserInfo(params) {
+  return request('/api/users/updateUserInfo', {
+    method: 'POST',
+    data: params,
+  });
+}

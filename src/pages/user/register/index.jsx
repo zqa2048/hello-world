@@ -142,12 +142,7 @@ class Register extends Component {
           dispatch({
             type: 'userRegister/submit',
             payload: { ...submitValues, prefix },
-          })
-            .then(status => {
-              // eslint-disable-next-line no-console
-              console.log(status);
-            })
-            .catch();
+          });
         }
       },
     );

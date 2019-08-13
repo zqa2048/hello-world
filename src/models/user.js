@@ -1,4 +1,4 @@
-import { queryCurrent, query as queryUsers, getCaptcha } from '@/services/user';
+import { queryCurrent, query as queryUsers, updateUserInfo } from '@/services/user';
 
 const UserModel = {
   namespace: 'user',
@@ -16,6 +16,14 @@ const UserModel = {
 
     *fetchCurrent(_, { call, put }) {
       const response = yield call(queryCurrent);
+      yield put({
+        type: 'saveCurrentUser',
+        payload: response,
+      });
+    },
+    *updateUserInfo(_, { call, put }) {
+      const response = yield call(updateUserInfo);
+      // console.log(response);
       yield put({
         type: 'saveCurrentUser',
         payload: response,
