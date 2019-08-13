@@ -6,6 +6,7 @@ function getProvince(_, res) {
 }
 
 function getCity(req, res) {
+  console.log(req, 'req');
   return res.json(city[req.params.province]);
 } // 代码中会兼容本地 service mock 以及部署站点的静态数据
 
@@ -209,7 +210,7 @@ export default {
       path: '/base/category/list',
     });
   },
-  'POST  /api/login/captcha': getCaptcha,
-  'GET  /api/geographic/province': getProvince,
-  'GET  /api/geographic/city/:province': getCity,
+  'POST /api/login/captcha': getCaptcha,
+  // 'GET /api/geographic/province': getProvince,
+  // 'GET /api/geographic/city/:province': getCity,
 };

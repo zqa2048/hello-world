@@ -1,16 +1,13 @@
-import {
-  queryCity,
-  queryCurrent,
-  queryProvince,
-  query as queryUsers,
-  updateUserInfo,
-} from '@/services/user';
+import { queryCurrent, query as queryUsers, updateUserInfo } from '@/services/user';
+
+import province from '../geographic/province';
+import city from '../geographic/city';
 
 const UserModel = {
   namespace: 'user',
   state: {
     currentUser: {},
-    province: [],
+    province,
     city: [],
     isLoading: false,
   },
@@ -32,7 +29,6 @@ const UserModel = {
     },
     *updateUserInfo(_, { call, put }) {
       const response = yield call(updateUserInfo);
-      // console.log(response);
       yield put({
         type: 'saveCurrentUser',
         payload: response,
@@ -43,21 +39,12 @@ const UserModel = {
         type: 'changeLoading',
         payload: true,
       });
-      const response = yield call(queryProvince);
-      console.log(response);
-      yield put({
-        type: 'setProvince',
-        payload: response,
-      });
     },
 
     *fetchCity({ payload }, { call, put }) {
-      console.log('payload', payload);
-      const response = yield call(queryCity, payload);
-      // console.log(response);
       yield put({
         type: 'setCity',
-        payload: response,
+        payload: city[payload],
       });
     },
   },
