@@ -1,14 +1,14 @@
-import city from './city.json';
-import province from './province.json';
+// import city from './city.json';
+// import province from './province.json';
 
-function getProvince(_, res) {
-  return res.json(province);
-}
+// function getProvince(_, res) {
+//   return res.json(province);
+// }
 
-function getCity(req, res) {
-  console.log(req, 'req');
-  return res.json(city[req.params.province]);
-} // 代码中会兼容本地 service mock 以及部署站点的静态数据
+// function getCity(req, res) {
+//   console.log(req, 'req');
+//   return res.json(city[req.params.province]);
+// } // 代码中会兼容本地 service mock 以及部署站点的静态数据
 
 function getCaptcha(req, res) {
   return res.send({
