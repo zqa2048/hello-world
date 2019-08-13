@@ -1,6 +1,7 @@
 import { FormattedMessage, formatMessage } from 'umi-plugin-react/locale';
 import React, { Component, Fragment } from 'react';
 import { List } from 'antd';
+import { connect } from 'dva';
 
 const passwordStrength = {
   strong: (
@@ -21,106 +22,71 @@ const passwordStrength = {
   ),
 };
 
+@connect(({ user }) => ({
+  currentUser: user.currentUser,
+}))
 class SecurityView extends Component {
-  getData = () => [
-    {
-      title: formatMessage(
-        {
-          id: 'account-settings.security.password',
-        },
-        {},
-      ),
-      description: (
-        <Fragment>
-          {formatMessage({
-            id: 'account-settings.security.password-description',
-          })}
-          ：{passwordStrength.strong}
-        </Fragment>
-      ),
-      actions: [
-        <a key="Modify">
-          <FormattedMessage id="account-settings.security.modify" defaultMessage="Modify" />
-        </a>,
-      ],
-    },
-    {
-      title: formatMessage(
-        {
-          id: 'account-settings.security.phone',
-        },
-        {},
-      ),
-      description: `${formatMessage(
-        {
-          id: 'account-settings.security.phone-description',
-        },
-        {},
-      )}：138****8293`,
-      actions: [
-        <a key="Modify">
-          <FormattedMessage id="account-settings.security.modify" defaultMessage="Modify" />
-        </a>,
-      ],
-    },
-    {
-      title: formatMessage(
-        {
-          id: 'account-settings.security.question',
-        },
-        {},
-      ),
-      description: formatMessage(
-        {
-          id: 'account-settings.security.question-description',
-        },
-        {},
-      ),
-      actions: [
-        <a key="Set">
-          <FormattedMessage id="account-settings.security.set" defaultMessage="Set" />
-        </a>,
-      ],
-    },
-    {
-      title: formatMessage(
-        {
-          id: 'account-settings.security.email',
-        },
-        {},
-      ),
-      description: `${formatMessage(
-        {
-          id: 'account-settings.security.email-description',
-        },
-        {},
-      )}：ant***sign.com`,
-      actions: [
-        <a key="Modify">
-          <FormattedMessage id="account-settings.security.modify" defaultMessage="Modify" />
-        </a>,
-      ],
-    },
-    {
-      title: formatMessage(
-        {
-          id: 'account-settings.security.mfa',
-        },
-        {},
-      ),
-      description: formatMessage(
-        {
-          id: 'account-settings.security.mfa-description',
-        },
-        {},
-      ),
-      actions: [
-        <a key="bind">
-          <FormattedMessage id="account-settings.security.bind" defaultMessage="Bind" />
-        </a>,
-      ],
-    },
-  ];
+  // state = {
+  //   passwordVisible: false,
+  //   phoneVisible: false,
+  // };
+
+  changePwd = () => null;
+
+  changeMobile = () => null;
+
+  getData = () => {
+    const { currentUser } = this.props;
+    const { phone } = currentUser;
+    let encryptionPhone;
+
+    if (phone) {
+      encryptionPhone = `${phone.slice(0, 3)}****${phone.slice(-4)}`;
+    }
+
+    return [
+      {
+        title: formatMessage(
+          {
+            id: 'account-settings.security.password',
+          },
+          {},
+        ),
+        description: (
+          <Fragment>
+            {formatMessage({
+              id: 'account-settings.security.password-description',
+            })}
+            ：{passwordStrength.strong}
+          </Fragment>
+        ),
+        actions: [
+          <a key="Modify" onClick={() => this.changePwd()}>
+            <FormattedMessage id="account-settings.security.modify" defaultMessage="Modify" />
+          </a>,
+        ],
+      },
+      {
+        title: formatMessage(
+          {
+            id: 'account-settings.security.phone',
+          },
+          {},
+        ),
+        description: `${formatMessage(
+          {
+            id: 'account-settings.security.phone-description',
+          },
+          {},
+        )}：${encryptionPhone}`,
+        actions: [
+          <a key="Modify" onClick={() => this.changeMobile()}>
+            <FormattedMessage id="account-settings.security.modify" defaultMessage="Modify" />
+          </a>,
+        ],
+      },
+    ];
+  };
 
   render() {
     const data = this.getData();
