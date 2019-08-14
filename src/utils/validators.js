@@ -25,3 +25,16 @@ export function phoneAndEmailVerify(rule, value, callback) {
     }
   }
 }
+
+export function EmailVerify(rule, value, callback) {
+  const emailReg = EMAIL_REGEX;
+  if (value) {
+    if (!emailReg.test(value)) {
+      callback(formatMessage({ id: 'validation.email.wrong-format' }));
+    } else {
+      callback();
+    }
+  } else {
+    callback(formatMessage({ id: 'validation.email.required' }));
+  }
+}

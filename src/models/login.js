@@ -33,7 +33,8 @@ const Model = {
     },
 
     *getCaptcha({ payload }, { call }) {
-      yield call(getCaptcha, payload);
+      const response = yield call(getCaptcha, payload);
+      return response;
     },
   },
   reducers: {
