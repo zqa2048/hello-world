@@ -71,6 +71,12 @@ export default [
                 icon: 'dashboard',
                 component: './cdn/list',
               },
+              {
+                path: '/cdn/info',
+                name: 'cdn',
+                icon: 'dashboard',
+                component: './cdn/info',
+              },
             ],
           },
           {

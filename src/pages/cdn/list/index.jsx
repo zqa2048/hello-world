@@ -54,25 +54,6 @@ const columns = [
   },
 ];
 
-const data = [
-  {
-    key: '1',
-    name: 'suprio.me',
-    origin: 'suprio.me',
-    site: '68.183.185.171',
-    set: 'A',
-    time: '2020-09-05',
-  },
-  {
-    key: '2',
-    name: 'test.me',
-    origin: 'test.me',
-    site: '68.183.180.101',
-    set: 'B',
-    time: '2020-09-05',
-  },
-];
-
 let CDNListTable = ({ dispatch, listData, loading }) => {
   useEffect(() => {
     dispatch({
