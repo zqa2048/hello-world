@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
-import { formatMessage, getLocale } from 'umi/locale';
-import { Form, Input, Button, Modal, Row, Col, Alert, Select } from 'antd';
+import { formatMessage } from 'umi/locale';
+import { Form, Input, Button, Modal, Row, Col, Alert, message } from 'antd';
 import { connect } from 'dva';
-// import { getPeopleGuid } from '@/utils/commonFunc';
 import { phoneVerify } from '@/utils/validators';
-// import FormConfig from '../../../../config/form.config';
 
 const FormItem = Form.Item;
 
@@ -20,29 +18,15 @@ class ChangePhoneModal extends Component {
       error: false,
       success: false,
       errorTip: '',
-      nationCodeLists: [],
-      nationCode: 86,
       count: 0,
     };
   }
-
-  // componentDidMount() {
-  //   this.setState({
-  //     nationCodeLists: FormConfig.FormOptions.nation[getLocale()],
-  //   });
-  // }
 
   componentDidUpdate(preProps) {
     if (preProps.visible !== this.props.visible) {
       if (!this.props.visible) {
         clearInterval(this.interval);
         this.props.form.resetFields();
-        this.setState({
-          success: false,
-          error: false,
-          errorTip: '',
-          count: 0,
-        });
       }
     }
   }
@@ -53,8 +37,6 @@ class ChangePhoneModal extends Component {
 
   onGetCaptcha = () => {
     const { dispatch, form } = this.props;
-
-    // 驗證電話並發請求
     return new Promise((resolve, reject) => {
       form.validateFields(['Phone_ChangePhone'], {}, (err, values) => {
         if (err) {
@@ -68,10 +50,8 @@ class ChangePhoneModal extends Component {
           dispatch({
             type: 'login/getCaptcha',
             payload: {
-              Phone: phone,
-              // PeopleGuid: getPeopleGuid(),
-              NationCode: this.state.nationCode.toString(),
-              Type: 4,
+              type: 1,
+              value: phone,
             },
           })
             .then(resolve)
@@ -86,26 +66,25 @@ class ChangePhoneModal extends Component {
     form.validateFields({ force: true }, (err, values) => {
       if (!err) {
         const submitValues = {
-          Phone: values.Phone_ChangePhone,
-          Code: values.Code_ChangePhone,
-          PeopleGuid: getPeopleGuid(),
-          NationCode: this.state.nationCode.toString(),
+          phone: values.Phone_ChangePhone,
+          captcha: values.captcha,
         };
         dispatch({
-          type: 'user/updateUserPhone',
+          type: 'user/changePhone',
           payload: submitValues,
         })
-          .then(status => {
-            if (status && status.StatusCode === 0) {
+          .then(res => {
+            if (res && res.status === 'ok') {
               this.setState({
                 success: true,
                 error: false,
               });
+              message.success('手机号码修改成功！');
               this.props.changePhoneSuccess();
-            } else if (status && status.StatusCode !== 0 && status.Info) {
+            } else if (res && res.status !== 'ok' && res.errorTip) {
               this.setState({
                 error: true,
-                errorTip: status.Info,
+                errorTip: res.errorTip,
               });
             }
           })
@@ -116,12 +95,6 @@ class ChangePhoneModal extends Component {
 
   handleCancel = () => {
     this.props.close();
-  };
-
-  handleNationCodeChange = e => {
-    this.setState({
-      nationCode: e,
-    });
   };
 
   checkSamePhone = phone => {
@@ -138,7 +111,6 @@ class ChangePhoneModal extends Component {
   };
 
   countDownCaptcha() {
-    // 發送SMS計時
     let count = 59;
     this.setState({ count });
     this.interval = setInterval(() => {
@@ -155,7 +127,7 @@ class ChangePhoneModal extends Component {
   );
 
   render() {
-    const { count, success, error, errorTip, nationCodeLists } = this.state;
+    const { count, success, error, errorTip } = this.state;
     const { visible, confirmLoading } = this.props;
     const { getFieldDecorator } = this.props.form;
     return (

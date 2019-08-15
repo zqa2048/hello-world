@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Input, Button, Modal, Row, Col, Alert, Select } from 'antd';
+import { Form, Input, Button, Modal, Row, Col, Alert, Select, message } from 'antd';
 import { formatMessage } from 'umi/locale';
 import { connect } from 'dva';
 
@@ -26,13 +26,6 @@ class ChangePwdModal extends Component {
       if (!this.props.visible) {
         clearInterval(this.interval);
         this.props.form.resetFields();
-        // eslint-disable-next-line react/no-did-update-set-state
-        this.setState({
-          success: false,
-          error: false,
-          errorTip: '',
-          count: 0,
-        });
       }
     }
   }
@@ -46,7 +39,6 @@ class ChangePwdModal extends Component {
   onGetCaptcha = () => {
     const { dispatch, form } = this.props;
 
-    // 驗證電話並發請求
     return new Promise((resolve, reject) => {
       form.validateFields(['emailOrPhone'], {}, (err, values) => {
         if (err) {
@@ -96,33 +88,37 @@ class ChangePwdModal extends Component {
         const isPhone = phoneReg.test(val);
 
         const submitValues = {
-          Phone: isPhone ? val : '',
-          Email: isPhone ? '' : val,
-          Code: values.Code,
-          Password: values.Password,
-          PasswordAgain: values.PasswordAgain,
-          PeopleGuid: getPeopleGuid(),
-          Type: 1,
+          emailOrPhone: values.emailOrPhone,
+          password: values.password,
+          repeatPassword: values.repeatPassword,
+          captcha: values.captcha,
+          type: isPhone ? '1' : '2',
         };
 
         dispatch({
-          type: 'register/updatePwd',
+          type: 'user/changePwd',
           payload: submitValues,
         })
-          .then(status => {
-            if (status && status.StatusCode === 0) {
+          .then(res => {
+            // console.log(res);
+            if (res && res.status === 'ok') {
               this.setState({
                 success: true,
                 error: false,
               });
+              message.success('密码修改成功！');
+              // console.log('123 :');
+              // this.handleCancel();
               this.props.changePwdSuccess();
-            } else if (status && status.StatusCode !== 0 && status.Info) {
+            } else {
               this.setState({
                 error: true,
-                errorTip: status.Info,
+                errorTip: res.errorTip,
               });
+              this.handleCancel();
             }
           })
+          // eslint-disable-next-line no-shadow
           .catch(err => console.error(err));
       }
     });
@@ -137,14 +133,13 @@ class ChangePwdModal extends Component {
     if (value && (value.length < 6 || value.length > 16)) {
       callback(formatMessage({ id: 'account-settings.security.password.strength.msg' }));
     }
-    if (value && value !== getFieldValue('Password')) {
+    if (value && value !== getFieldValue('password')) {
       callback(formatMessage({ id: 'account-settings.security.input.twice' }));
     }
     callback();
   };
 
   countDownCaptcha() {
-    // 發送SMS計時
     let count = 59;
     this.setState({ count });
     this.interval = setInterval(() => {
@@ -170,7 +165,7 @@ class ChangePwdModal extends Component {
 
     return (
       <Modal
-        title={formatMessage({ id: 'account-settings.security.change-current-email' })}
+        title={formatMessage({ id: 'account-settings.security.change-current-password' })}
         visible={visible}
         onOk={this.handleOk}
         confirmLoading={confirmLoading}
@@ -235,7 +230,7 @@ class ChangePwdModal extends Component {
             )}
             <FormItem />
             <FormItem>
-              {getFieldDecorator('repeat-password', {
+              {getFieldDecorator('repeatPassword', {
                 rules: [
                   {
                     required: true,

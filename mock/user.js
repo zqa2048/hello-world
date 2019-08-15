@@ -211,6 +211,48 @@ export default {
     });
   },
   'POST /api/login/captcha': getCaptcha,
+  'POST /api/users/changePwd': (req, res) => {
+    const { captcha } = req.body;
+    if (captcha === '1234') {
+      res.send({
+        status: 'ok',
+      });
+    } else {
+      res.send({
+        status: -1,
+        error: 'error',
+        errorTip: 'captcha is not correct!',
+      });
+    }
+  },
+  'POST /api/users/changePhone': (req, res) => {
+    const { captcha } = req.body;
+    if (captcha === '1234') {
+      res.send({
+        status: 'ok',
+      });
+    } else {
+      res.send({
+        status: -1,
+        error: 'error',
+        errorTip: 'captcha is not correct!',
+      });
+    }
+  },
+  'POST /api/users/changeEmail': (req, res) => {
+    const { captcha } = req.body;
+    if (captcha === '1234') {
+      res.send({
+        status: 'ok',
+      });
+    } else {
+      res.send({
+        status: -1,
+        error: 'error',
+        errorTip: 'captcha is not correct!',
+      });
+    }
+  },
   // 'GET /api/geographic/province': getProvince,
   // 'GET /api/geographic/city/:province': getCity,
 };

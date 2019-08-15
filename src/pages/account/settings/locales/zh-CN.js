@@ -71,4 +71,5 @@ export default {
   'account-settings.security.new-email': '请输入新的邮箱号码',
   'account-settings.phone-number.no-same.msg': '手机号码不能相同',
   'account-settings.email.no-same.msg': '邮箱号码不能相同',
+  'account-settings.security.input.twice': '两次输入密码不一致',
 };

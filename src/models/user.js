@@ -1,4 +1,11 @@
-import { queryCurrent, query as queryUsers, updateUserInfo } from '@/services/user';
+import {
+  queryCurrent,
+  query as queryUsers,
+  updateUserInfo,
+  changePwd,
+  changePhone,
+  changeEmail,
+} from '@/services/user';
 
 import province from '../geographic/province';
 import city from '../geographic/city';
@@ -46,6 +53,33 @@ const UserModel = {
         type: 'setCity',
         payload: city[payload],
       });
+    },
+
+    *changePwd({ payload }, { call }) {
+      // yield put({
+      //   type: 'setCity',
+      //   payload: city[payload],
+      // });
+      const response = yield call(changePwd, payload);
+      return response;
+    },
+
+    *changePhone({ payload }, { call }) {
+      // yield put({
+      //   type: 'setCity',
+      //   payload: city[payload],
+      // });
+      const response = yield call(changePhone, payload);
+      return response;
+    },
+
+    *changeEmail({ payload }, { call }) {
+      // yield put({
+      //   type: 'setCity',
+      //   payload: city[payload],
+      // });
+      const response = yield call(changeEmail, payload);
+      return response;
     },
   },
   reducers: {

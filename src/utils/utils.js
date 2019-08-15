@@ -27,3 +27,11 @@ const sleep = ms =>
   });
 
 export { isAntDesignProOrDev, isAntDesignPro, isUrl, sleep };
+
+export const getParameterByName = (name, e) => {
+  const para = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+  const regex = new RegExp(`[\\?&]${para}=([^&#]*)`);
+
+  const results = regex.exec(window.location.search);
+  return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+};

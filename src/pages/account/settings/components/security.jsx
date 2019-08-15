@@ -2,6 +2,8 @@ import { FormattedMessage, formatMessage } from 'umi-plugin-react/locale';
 import React, { Suspense, Component, Fragment } from 'react';
 import { List } from 'antd';
 import { connect } from 'dva';
+import router from 'umi/router';
+import { getParameterByName } from '@/utils/utils';
 
 const ChangePwdModal = React.lazy(() => import('./ChangePwd'));
 const ChangePhoneModal = React.lazy(() => import('./ChangePhone'));
@@ -37,6 +39,10 @@ class SecurityView extends Component {
     confirmLoading: false,
   };
 
+  componentWillMount() {
+    clearTimeout(this.changeSuccessTimer);
+  }
+
   showModel = type => {
     this.setState({
       [type]: true,
@@ -47,6 +53,27 @@ class SecurityView extends Component {
     this.setState({
       [type]: false,
     });
+  };
+
+  changeSuccess = type => {
+    // const fromUrl = getParameterByName('from');
+    // const { dispatch } = this.props;
+    // dispatch({
+    //   type: 'user/getUserInfo',
+    //   payload: {
+    //     PageIndex: 1,
+    //     PageSize: 1,
+    //   },
+    // });
+    this.setState({
+      confirmLoading: true,
+    });
+    this.changeSuccessTimer = setTimeout(() => {
+      this.setState({
+        [type]: false,
+        confirmLoading: false,
+      });
+    }, 2000);
   };
 
   getData = () => {
@@ -122,42 +149,42 @@ class SecurityView extends Component {
     return (
       <Fragment>
         <Suspense fallback={<div>Loading...</div>}>
-        <List
-          itemLayout="horizontal"
-          dataSource={data}
-          renderItem={item => (
-            <List.Item actions={item.actions}>
-              <List.Item.Meta title={item.title} description={item.description} />
-            </List.Item>
+          <List
+            itemLayout="horizontal"
+            dataSource={data}
+            renderItem={item => (
+              <List.Item actions={item.actions}>
+                <List.Item.Meta title={item.title} description={item.description} />
+              </List.Item>
+            )}
+          />
+          {passwordVisible && (
+            <ChangePwdModal
+              visible={passwordVisible}
+              confirmLoading={confirmLoading}
+              show={() => this.showModal('passwordVisible')}
+              close={() => this.closeModal('passwordVisible')}
+              changePwdSuccess={() => this.changeSuccess('passwordVisible')}
+            />
           )}
-        />
-        {passwordVisible && (
-          <ChangePwdModal
-            visible={passwordVisible}
-            confirmLoading={confirmLoading}
-            show={() => this.showModal('passwordVisible')}
-            close={() => this.closeModal('passwordVisible')}
-            changePwdSuccess={() => this.changeSuccess('passwordVisible')}
-          />
-        )}
-        {phoneVisible && (
-          <ChangePhoneModal
-            visible={phoneVisible}
-            confirmLoading={confirmLoading}
-            show={() => this.showModal('phoneVisible')}
-            close={() => this.closeModal('phoneVisible')}
-            changePhoneSuccess={() => this.changeSuccess('phoneVisible')}
-          />
-        )}
-        {emailVisible && (
-          <ChangeEmailModal
-            visible={emailVisible}
-            confirmLoading={confirmLoading}
-            show={() => this.showModal('emailVisible')}
-            close={() => this.closeModal('emailVisible')}
-            changeEmailSuccess={() => this.changeSuccess('emailVisible')}
-          />
-        )}
+          {phoneVisible && (
+            <ChangePhoneModal
+              visible={phoneVisible}
+              confirmLoading={confirmLoading}
+              show={() => this.showModal('phoneVisible')}
+              close={() => this.closeModal('phoneVisible')}
+              changePhoneSuccess={() => this.changeSuccess('phoneVisible')}
+            />
+          )}
+          {emailVisible && (
+            <ChangeEmailModal
+              visible={emailVisible}
+              confirmLoading={confirmLoading}
+              show={() => this.showModal('emailVisible')}
+              close={() => this.closeModal('emailVisible')}
+              changeEmailSuccess={() => this.changeSuccess('emailVisible')}
+            />
+          )}
         </Suspense>
       </Fragment>
     );

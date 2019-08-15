@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { formatMessage, getLocale } from 'umi/locale';
-import { Form, Input, Button, Modal, Row, Col, Alert } from 'antd';
+import { formatMessage } from 'umi/locale';
+import { Form, Input, Button, Modal, Row, Col, Alert, message } from 'antd';
 import { connect } from 'dva';
-// import { getPeopleGuid, getParameterByName } from '@/utils/commonFunc';
 import { EmailVerify } from '@/utils/validators';
 
 const FormItem = Form.Item;
@@ -28,13 +27,6 @@ class ChangeEmailModal extends Component {
       if (!this.props.visible) {
         clearInterval(this.interval);
         this.props.form.resetFields();
-        // eslint-disable-next-line react/no-did-update-set-state
-        this.setState({
-          success: false,
-          error: false,
-          errorTip: '',
-          count: 0,
-        });
       }
     }
   }
@@ -45,25 +37,21 @@ class ChangeEmailModal extends Component {
 
   onGetCaptcha = () => {
     const { dispatch, form } = this.props;
-
-    // 驗證 Email 並發請求
     return new Promise((resolve, reject) => {
-      form.validateFields(['Email'], {}, (err, values) => {
+      form.validateFields(['email'], {}, (err, values) => {
         if (err) {
           reject(err);
         } else {
-          const email = values.Email;
+          const { email } = values;
           if (this.checkSameEmail(email)) {
             return;
           }
           this.countDownCaptcha();
           dispatch({
-            type: 'user/sendEmail',
+            type: 'login/getCaptcha',
             payload: {
-              Email: email,
-              Type: 2,
-              // LangType: this.getLangType(),
-              // PeopleGuid: getPeopleGuid(),
+              value: email,
+              type: 2,
             },
           })
             .then(resolve)
@@ -73,42 +61,34 @@ class ChangeEmailModal extends Component {
     });
   };
 
-  // getLangType = () => {
-  //   const CN = getLocale() === 'zh-CN';
-  //   if (CN) {
-  //     return 0;
-  //   }
-  //   return 1;
-  // };
-
   handleOk = () => {
     const { form, dispatch } = this.props;
     form.validateFields({ force: true }, (err, values) => {
       if (!err) {
         const submitValues = {
-          Email: values.Email,
-          Code: values.Code_ChangeEmail,
-          // PeopleGuid: getPeopleGuid(),
+          email: values.email,
+          captcha: values.captcha,
         };
         dispatch({
-          type: 'user/updateUserEmail',
+          type: 'user/changeEmail',
           payload: submitValues,
         })
-          .then(status => {
-            if (status && status.StatusCode === 0) {
+          .then(res => {
+            if (res && res.status === 'ok') {
               this.setState({
                 success: true,
                 error: false,
               });
+              message.success('邮箱修改成功！');
               this.props.changeEmailSuccess();
-            } else if (status && status.StatusCode !== 0 && status.Info) {
+            } else if (res && res.status !== 'ok' && res.errorTip) {
               this.setState({
                 error: true,
-                errorTip: status.Info,
+                errorTip: res.errorTip,
               });
             }
           })
-          .catch(err => console.error(err));
+          .catch(error => console.error(error));
       }
     });
   };
@@ -131,7 +111,6 @@ class ChangeEmailModal extends Component {
   };
 
   countDownCaptcha() {
-    // 發送SMS計時
     let count = 59;
     this.setState({ count });
     this.interval = setInterval(() => {
@@ -167,7 +146,7 @@ class ChangeEmailModal extends Component {
             )}
           {!success && error && errorTip && this.renderMessage(errorTip, 'error')}
           <FormItem>
-            {getFieldDecorator('Email', {
+            {getFieldDecorator('email', {
               rules: [
                 {
                   validator: EmailVerify,

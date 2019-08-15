@@ -33,12 +33,12 @@ class Settings extends Component {
       // eslint-disable-next-line max-len
       //   <FormattedMessage id="account-settings.menuMap.binding" defaultMessage="Account Binding" />
       // ),
-      notification: (
-        <FormattedMessage
-          id="account-settings.menuMap.notification"
-          defaultMessage="New Message Notification"
-        />
-      ),
+      // notification: (
+      //   <FormattedMessage
+      //     id="account-settings.menuMap.notification"
+      //     defaultMessage="New Message Notification"
+      //   />
+      // ),
     };
     this.state = {
       mode: 'inline',

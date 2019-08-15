@@ -28,6 +28,28 @@ export async function updateUserInfo(params) {
 export async function queryProvince() {
   return request('/api/geographic/province');
 }
+
 export async function queryCity(province) {
   return request(`/api/geographic/city/${province}`);
+}
+
+export async function changePwd(params) {
+  return request('/api/users/changePwd', {
+    method: 'POST',
+    data: params,
+  });
+}
+
+export async function changePhone(params) {
+  return request('/api/users/changePhone', {
+    method: 'POST',
+    data: params,
+  });
+}
+
+export async function changeEmail(params) {
+  return request('/api/users/changeEmail', {
+    method: 'POST',
+    data: params,
+  });
 }
