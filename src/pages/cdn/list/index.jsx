@@ -1,8 +1,23 @@
 import React from 'react';
-import { Alert, Button, Table, Divider, Tag, Card } from 'antd';
+import { Alert, Button, Table, Card, Icon, Tag } from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { FormattedMessage, formatMessage } from 'umi-plugin-react/locale';
+import router from 'umi/router';
 import style from './style.less';
+
+const TableTitle = (
+  <>
+    <h3>
+      <FormattedMessage id="cdn-list.basic.description" />
+    </h3>
+    <div>
+      <Icon type="question-circle" />
+      <a>
+        <FormattedMessage id="cdn-list.what.is.a" />
+      </a>
+    </div>
+  </>
+);
 
 const columns = [
   {
@@ -30,6 +45,11 @@ const columns = [
     title: '结束时间',
     key: 'time',
     dataIndex: 'time',
+    render: text => (
+      <div>
+        {text} &nbsp; <Tag color="#108ee9">剩386天</Tag>
+      </div>
+    ),
   },
 ];
 
@@ -68,20 +88,20 @@ const CDNList = () => (
         showIcon
       />
 
-      <Button type="primary" icon="plus" className={style['add-btn']}>
+      <Button
+        type="primary"
+        icon="plus"
+        className={style['add-btn']}
+        onClick={() => router.push('/cdn/new')}
+      >
         <FormattedMessage id="cdn-list.add.btn" />
       </Button>
       <Table
-        title={() => (
-          <h3>
-            <FormattedMessage id="cdn-list.basic.description" />
-          </h3>
-        )}
+        title={() => TableTitle}
         bodyStyle={{
           background: 'white',
-          borderTop: 'solid 1px #e8e8e8',
-          borderLeft: 'solid 1px #e8e8e8',
-          borderRight: 'solid 1px #e8e8e8',
+          border: 'solid 1px #e8e8e8',
+          borderBottom: 'none',
         }}
         columns={columns}
         dataSource={data}
