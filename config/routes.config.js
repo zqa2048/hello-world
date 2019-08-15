@@ -53,8 +53,25 @@ export default [
           {
             path: '/cdn',
             name: 'cdn',
-            icon: 'dashboard',
-            component: './cdn',
+            hideChildrenInMenu: true,
+            routes: [
+              {
+                path: '/cdn',
+                redirect: '/cdn/list',
+              },
+              {
+                path: '/cdn/new',
+                name: 'cdn',
+                icon: 'dashboard',
+                component: './cdn/new',
+              },
+              {
+                path: '/cdn/list',
+                name: 'cdn',
+                icon: 'dashboard',
+                component: './cdn/list',
+              },
+            ],
           },
           {
             name: 'account',
@@ -76,7 +93,7 @@ export default [
           },
           {
             path: '/',
-            redirect: '/cdn',
+            redirect: '/cdn/new',
             authority: ['admin', 'user'],
           },
           {
