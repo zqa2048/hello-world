@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Alert, Button, Table, Card, Icon, Tag } from 'antd';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { FormattedMessage, formatMessage } from 'umi-plugin-react/locale';
+import { connect } from 'dva';
 import router from 'umi/router';
 import style from './style.less';
 
@@ -72,6 +73,36 @@ const data = [
   },
 ];
 
+let CDNListTable = ({ dispatch, listData, loading }) => {
+  useEffect(() => {
+    dispatch({
+      type: 'cdn/fetchList',
+      payload: {
+        guid: '1234',
+      },
+    });
+  }, []);
+
+  return (
+    <Table
+      title={() => TableTitle}
+      bodyStyle={{
+        background: 'white',
+        border: 'solid 1px #e8e8e8',
+        borderBottom: 'none',
+      }}
+      columns={columns}
+      dataSource={listData}
+      loading={loading}
+    />
+  );
+};
+
+CDNListTable = connect(({ cdn, loading }) => ({
+  listData: cdn.cdnList,
+  loading: loading.effects['cdn/fetchList'],
+}))(CDNListTable);
+
 const CDNList = () => (
   <PageHeaderWrapper content={<FormattedMessage id="cdn-list.basic.description" />}>
     <Card bordered={false}>
@@ -96,16 +127,7 @@ const CDNList = () => (
       >
         <FormattedMessage id="cdn-list.add.btn" />
       </Button>
-      <Table
-        title={() => TableTitle}
-        bodyStyle={{
-          background: 'white',
-          border: 'solid 1px #e8e8e8',
-          borderBottom: 'none',
-        }}
-        columns={columns}
-        dataSource={data}
-      />
+      <CDNListTable />
     </Card>
   </PageHeaderWrapper>
 );
